@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { useAuth } from 'hooks/hooks';
 import { lazy, useEffect } from 'react';
 import { Layout } from './components/Layout/Layout';
@@ -15,7 +15,7 @@ const Contacts = lazy(() => import('pages/Contacts/Contacts'));
 
 export const App = () => {
   const dispatch = useDispatch();
-  const { isRefreshing } = useAuth;
+  const { isRefreshing, isLoggedIn } = useAuth;
 
   useEffect(() => {
     dispatch(refreshUser());
@@ -30,6 +30,7 @@ export const App = () => {
         <Route path="/register" element={<RestrictedRoute component={<Register />} redirectTo="/contacts" />}/>
         <Route path="/login" element={<RestrictedRoute component={<Login />} redirectTo="/contacts" />} />
         <Route path="/contacts" element={<PrivateRoute component={<Contacts />} redirectTo="/login" />}/>
+        <Route path="*" element={isLoggedIn ? <Navigate to="/contacts" /> : <Navigate to="/login" />} />      
       </Route>
     </Routes>
   );
